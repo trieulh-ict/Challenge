@@ -1,0 +1,19 @@
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ExtraTranslation">
+    <string name="app_name">Challenge</string>
+    <string name="orchard_update_title"><![CDATA[Update Rate & Volumn]]></string>
+    <string name="confirm">Confirm</string>
+    <string name="orchard_update_btn_add_max_trees">ADD MAX TREES</string>
+    <string name="rate_type">Rate Type</string>
+    <string name="block">Block</string>
+    <string name="orchard">Orchard</string>
+    <string name="piece_rate">Piece Rate</string>
+    <string name="wages">Wages</string>
+    <string name="orchard_update_wages_description">%1$s will be paid by wages in this timesheet.</string>
+    <string name="rate">Rate</string>
+    <string name="sign_usd">$</string>
+    <string name="per_hour">/hour</string>
+    <string name="orchard_update_btn_apply_to_all">APPLY TO ALL</string>
+    <string name="orchard_update_tree_input_label">Tree for row %1$s</string>
+    <string name="orchard_update_maximum_trees"> / %1$s</string>
+    <string name="orchard_update_completed">%1$s (%2$s)</string>
+</resources>
