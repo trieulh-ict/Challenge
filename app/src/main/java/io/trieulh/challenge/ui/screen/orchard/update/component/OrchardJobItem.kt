@@ -3,8 +3,6 @@ package io.trieulh.challenge.ui.screen.orchard.update.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,22 +17,42 @@ import io.trieulh.challenge.domain.model.SubJob
 import io.trieulh.challenge.ui.theme.LightTaupe
 import io.trieulh.challenge.ui.theme.OldLace
 import io.trieulh.challenge.R
+import io.trieulh.challenge.domain.model.RateType
 import io.trieulh.challenge.domain.model.Staff
 
 @Composable
-fun OrchardJobItem(subJob: SubJob, jobName: String, modifier: Modifier = Modifier) {
+fun OrchardJobItem(
+    subJob: SubJob,
+    jobName: String,
+    onUpdateMaxTrees: () -> Unit = {},
+    onSwitchRateType: (Staff, RateType) -> Unit = { staff, rateType -> },
+    onToggleTreeRow: (Staff, Int) -> Unit = { staff, rowId -> },
+    onUpdateTreesInRow: (Staff, Int, Int) -> Unit = { staff, rowId, treeNumber -> },
+    onRateChanged: (Staff, Int) -> Unit = { staff, rate -> },
+    onApplyRateToAll: (Int) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     Card(
-        elevation = 8.dp, modifier = modifier
-            .background(Color.White)
+        elevation = 8.dp,
+        modifier = modifier.background(Color.White)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            HeaderItem(subJob.name)
+            HeaderItem(subJob.name, onUpdateMaxTrees)
             subJob.staffs.forEachIndexed { index, staff ->
-                OrchardWorkerItem(staff, jobName, subJob.availableRows)
+                OrchardWorkerItem(
+                    staff,
+                    jobName,
+                    subJob.availableRows,
+                    onSwitchRateType,
+                    onToggleTreeRow,
+                    onUpdateTreesInRow,
+                    onRateChanged,
+                    onApplyRateToAll
+                )
                 if (index < subJob.staffs.lastIndex)
                     Divider(color = Color.LightGray, thickness = 1.dp)
             }
@@ -43,7 +61,7 @@ fun OrchardJobItem(subJob: SubJob, jobName: String, modifier: Modifier = Modifie
 }
 
 @Composable
-private fun HeaderItem(jobName: String) {
+private fun HeaderItem(jobName: String, onUpdateMaxTrees: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,7 +75,7 @@ private fun HeaderItem(jobName: String) {
             modifier = Modifier.weight(1f)
         )
         OutlinedButton(
-            onClick = { /*TODO*/ },
+            onClick = onUpdateMaxTrees,
             border = BorderStroke(1.dp, color = LightTaupe),
             colors = ButtonDefaults.outlinedButtonColors(
                 backgroundColor = Color.Transparent
@@ -74,6 +92,6 @@ private fun HeaderItem(jobName: String) {
 
 @Preview
 @Composable
-fun PreviewOrchardJobItem() {
+private fun PreviewOrchardJobItem() {
     OrchardJobItem(MockResponse.mockSubJob1, MockResponse.mockJob.name)
 }

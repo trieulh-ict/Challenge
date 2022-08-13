@@ -8,6 +8,7 @@ object Versions {
     const val gradlePluginVersion = "7.2.1"
     const val hiltPlugin = "2.43.2"
     const val googleServices = "4.3.13"
+    const val coroutine = "1.6.4"
 
     const val composeViewModel = "2.5.1"
     const val activityCompose = "1.5.1"
@@ -21,6 +22,8 @@ object Versions {
 
     const val junit = "4.13.2"
     const val junitX = "1.1.3"
+    const val coreTesting = "2.0.0"
+    const val turbine = "0.9.0"
 
     const val compose = "1.3.0-alpha02"
     const val composeCompiler = "1.3.0-rc01"
@@ -31,7 +34,6 @@ object Versions {
     const val hiltCompose = "1.0.0"
 
     const val firebaseBom = "30.3.1"
-    const val coroutinePlayServices = "1.6.4"
 
     const val ktxSerialization = "1.3.3"
     const val mockk = "1.12.5"
@@ -106,12 +108,15 @@ object Deps {
         const val firebaseBom = "com.google.firebase:firebase-bom:${Versions.firebaseBom}"
         const val firebaseAuth = "com.google.firebase:firebase-auth-ktx"
         const val firebaseFirestore = "com.google.firebase:firebase-firestore-ktx"
-        const val coroutinePlayServices = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.coroutinePlayServices}"
+        const val coroutinePlayServices = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.coroutine}"
     }
 
     object Test {
         const val junit = "junit:junit:${Versions.junit}"
         const val junitX = "androidx.test.ext:junit:${Versions.junitX}"
         const val mockk = "io.mockk:mockk:${Versions.mockk}"
+        const val coroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutine}"
+        const val coreTesting = "androidx.arch.core:core-testing:${Versions.coreTesting}"
+        const val turbine = "app.cash.turbine:turbine:${Versions.turbine}"
     }
 }

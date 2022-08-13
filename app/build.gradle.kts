@@ -71,9 +71,6 @@ dependencies {
         implementation(composeDestinations)
         implementation(composeDestinationAnimation)
 
-        api(accompanistMaterial)
-        api(accompanistAnimation)
-
         androidTestImplementation(uiTestJunit4)
         debugImplementation(uiTooling)
 
@@ -94,6 +91,10 @@ dependencies {
 
     with(Deps.Test) {
         testImplementation(junit)
+        testImplementation(mockk)
+        testImplementation(coroutineTest)
+        testImplementation(coreTesting)
+        testImplementation(turbine)
         androidTestImplementation(junitX)
     }
 }

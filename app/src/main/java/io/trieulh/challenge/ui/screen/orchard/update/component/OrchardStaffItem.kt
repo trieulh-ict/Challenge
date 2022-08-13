@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -32,7 +31,16 @@ import io.trieulh.challenge.R
 import io.trieulh.challenge.domain.model.AssignedRow
 
 @Composable
-fun OrchardWorkerItem(staff: Staff, jobName: String, availableRows: List<AvailableRow>) {
+fun OrchardWorkerItem(
+    staff: Staff,
+    jobName: String,
+    availableRows: List<AvailableRow>,
+    onSwitchRateType: (Staff, RateType) -> Unit,
+    onToggleTreeRow: (Staff, Int) -> Unit,
+    onUpdateTreesInRow: (Staff, Int, Int) -> Unit,
+    onRateChanged: (Staff, Int) -> Unit,
+    onApplyRateToAll: (Int) -> Unit
+) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -70,13 +78,23 @@ fun OrchardWorkerItem(staff: Staff, jobName: String, availableRows: List<Availab
             RateTypeButton(
                 text = stringResource(id = R.string.piece_rate),
                 selected = staff.rateType == RateType.PieceRate,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    if (staff.rateType != RateType.PieceRate) {
+                        onSwitchRateType(staff, RateType.PieceRate)
+                    }
+                }
             )
             Spacer(modifier = Modifier.width(16.dp))
             RateTypeButton(
                 text = stringResource(id = R.string.wages),
                 selected = staff.rateType == RateType.Wages,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    if (staff.rateType != RateType.Wages) {
+                        onSwitchRateType(staff, RateType.Wages)
+                    }
+                }
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -89,7 +107,10 @@ fun OrchardWorkerItem(staff: Staff, jobName: String, availableRows: List<Availab
         } else {
             PieceRateInputField(
                 rate = staff.rate,
-                onRateChange = {}
+                onRateChange = {
+                    onRateChanged(staff, it.toIntOrNull() ?: 0)
+                },
+                onApplyRateToAll = onApplyRateToAll
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -101,19 +122,32 @@ fun OrchardWorkerItem(staff: Staff, jobName: String, availableRows: List<Availab
                 AvailableRowItem(
                     row = row,
                     selected = row.rowId in staff.assignedRows.map { it.rowId },
-                    donePartially = row.completedLogs.isNotEmpty()
+                    donePartially = row.completedLogs.isNotEmpty(),
+                    onToggle = {
+                        onToggleTreeRow(staff, row.rowId)
+                    }
                 )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
         staff.assignedRows.forEach { assignedRow ->
-            TreeInputTextField(assignedRow, availableRows.first { it.rowId == assignedRow.rowId })
+            TreeInputTextField(
+                assignedRow,
+                availableRows.first { it.rowId == assignedRow.rowId },
+                onValueChange = {
+                    onUpdateTreesInRow(staff, assignedRow.rowId, it.toIntOrNull() ?: 0)
+                }
+            )
         }
     }
 }
 
 @Composable
-fun TreeInputTextField(assignedRow: AssignedRow, rowInfo: AvailableRow) {
+fun TreeInputTextField(
+    assignedRow: AssignedRow,
+    rowInfo: AvailableRow,
+    onValueChange: (String) -> Unit
+) {
     Column(Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.orchard_update_tree_input_label, assignedRow.rowId),
@@ -132,7 +166,7 @@ fun TreeInputTextField(assignedRow: AssignedRow, rowInfo: AvailableRow) {
         ) {
             BasicTextField(
                 value = assignedRow.assignedTrees.toString(),
-                onValueChange = {},
+                onValueChange = onValueChange,
                 textStyle = MaterialTheme.typography.h6.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -165,7 +199,7 @@ fun TreeInputTextField(assignedRow: AssignedRow, rowInfo: AvailableRow) {
 }
 
 @Composable
-fun AvailableRowItem(
+private fun AvailableRowItem(
     row: AvailableRow,
     selected: Boolean = true,
     onToggle: () -> Unit = {},
@@ -200,6 +234,7 @@ fun AvailableRowItem(
 private fun PieceRateInputField(
     rate: Int?,
     onRateChange: (String) -> Unit,
+    onApplyRateToAll: (Int) -> Unit
 ) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
@@ -239,23 +274,31 @@ private fun PieceRateInputField(
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(4.dp))
-        TextButton(onClick = { /*TODO*/ }) {
+        TextButton(onClick = {
+            onApplyRateToAll(rate ?: 0)
+        }) {
             Text(stringResource(R.string.orchard_update_btn_apply_to_all))
         }
     }
 }
 
 @Composable
-private fun RateTypeButton(text: String, selected: Boolean, modifier: Modifier = Modifier) {
-    Box(modifier = modifier
-        .height(48.dp)
-        .background(
-            color = if (selected) LightTaupe else Color.LightGray,
-            shape = RoundedCornerShape(4.dp)
-        )
-        .clickable(
-            onClick = { /* ...*/ }
-        ),
+private fun RateTypeButton(
+    text: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .height(48.dp)
+            .background(
+                color = if (selected) LightTaupe else Color.LightGray,
+                shape = RoundedCornerShape(4.dp)
+            )
+            .clickable(
+                onClick = onClick
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(text.uppercase(), color = if (selected) Color.White else Color.Black)
@@ -263,7 +306,7 @@ private fun RateTypeButton(text: String, selected: Boolean, modifier: Modifier =
 }
 
 @Composable
-fun LabelRow(label: String, value: String) {
+private fun LabelRow(label: String, value: String) {
     Row(Modifier.fillMaxWidth()) {
         Text(text = label, style = MaterialTheme.typography.caption, color = Color.Gray)
         Spacer(modifier = Modifier.width(6.dp))
@@ -273,10 +316,15 @@ fun LabelRow(label: String, value: String) {
 
 @Preview
 @Composable
-fun PreviewOrchardWorkerItem() {
+private fun PreviewOrchardWorkerItem() {
     OrchardWorkerItem(
         MockResponse.mockStaff2,
         MockResponse.mockJob.name,
-        MockResponse.mockSubJob1.availableRows
+        MockResponse.mockSubJob1.availableRows,
+        onSwitchRateType = { staff, rateType -> },
+        onToggleTreeRow = { staff, rowId -> },
+        onUpdateTreesInRow = { staff, rowId, treeNumber -> },
+        onRateChanged = { staff, rate -> },
+        onApplyRateToAll = { rate -> }
     )
 }

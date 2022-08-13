@@ -16,4 +16,6 @@
     <string name="orchard_update_tree_input_label">Tree for row %1$s</string>
     <string name="orchard_update_maximum_trees"> / %1$s</string>
     <string name="orchard_update_completed">%1$s (%2$s)</string>
+    <string name="orchard_update_success_title">Your Orchard information has been updated successfully!</string>
+    <string name="update_again">Update Again</string>
 </resources>
