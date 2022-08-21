@@ -17,15 +17,15 @@ interface OrchardUpdateUiStateManager {
     fun startSubmittingData()
     fun stopSubmittingData()
     fun updateJob(job: Job)
-    fun updateMaxTreesBySubJob(name: String)
-    fun switchRateType(staff: Staff, rateType: RateType)
-    fun onToggleTreeRow(staff: Staff, rowId: Int)
-    fun onUpdateTreesInRow(staff: Staff, rowId: Int, treeNumber: Int)
-    fun onRateChanged(staff: Staff, rate: Int)
-    fun onAppRateToAll(subJob: SubJob, rate: Int)
+    suspend fun updateMaxTreesBySubJob(name: String)
+    suspend fun switchRateType(staff: Staff, rateType: RateType)
+    suspend fun onToggleTreeRow(staff: Staff, rowId: Int)
+    suspend fun onUpdateTreesInRow(staff: Staff, rowId: Int, treeNumber: Int)
+    suspend fun onRateChanged(staff: Staff, rate: Int)
+    suspend fun onAppRateToAll(subJob: SubJob, rate: Int)
 }
 
-class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: ThreadDispatcher) : OrchardUpdateUiStateManager {
+class OrchardUpdateUiStateManagerImpl @Inject constructor(private val dispatcher: ThreadDispatcher) : OrchardUpdateUiStateManager {
     private val _uiState = MutableStateFlow(OrchardUpdateUiState())
     override val uiState = _uiState.asStateFlow()
 
@@ -59,7 +59,7 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: Thre
         _uiState.update { copy(job = job, isFetchingData = false) }
     }
 
-    override fun updateMaxTreesBySubJob(name: String) {
+    override suspend fun updateMaxTreesBySubJob(name: String) {
         uiState.value.job.subJobs.firstOrNull() { it.name == name }?.let { subJob ->
             val availableMaxTreeForRows = subJob.availableRows.associate { availableRow ->
                 val assignedStaffs = subJob.staffs.filter { it.assignedRows.any { it.rowId == availableRow.rowId } }
@@ -72,7 +72,9 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: Thre
                 staffs = subJob.staffs.map { staff ->
                     staff.copy(
                         assignedRows = staff.assignedRows.map { assignedRow ->
-                            assignedRow.copy(assignedTrees = availableMaxTreeForRows.get(assignedRow.rowId) ?: assignedRow.assignedTrees)
+                            assignedRow.copy(
+                                assignedTrees = availableMaxTreeForRows.get(assignedRow.rowId) ?: assignedRow.assignedTrees
+                            )
                         }
                     )
                 }
@@ -82,7 +84,7 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: Thre
         }
     }
 
-    override fun switchRateType(staff: Staff, rateType: RateType) {
+    override suspend fun switchRateType(staff: Staff, rateType: RateType) {
         uiState.value.job.subJobs.firstOrNull() { it.staffs.any { it.name == staff.name } }?.let { subJob ->
             subJob.copy(
                 staffs = subJob.staffs.map {
@@ -98,7 +100,7 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: Thre
         }
     }
 
-    override fun onToggleTreeRow(staff: Staff, rowId: Int) {
+    override suspend fun onToggleTreeRow(staff: Staff, rowId: Int) {
         uiState.value.job.subJobs.firstOrNull() { it.staffs.any { it.name == staff.name } }?.let { subJob ->
             subJob.copy(
                 staffs = subJob.staffs.map {
@@ -122,7 +124,7 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: Thre
         }
     }
 
-    override fun onUpdateTreesInRow(staff: Staff, rowId: Int, treeNumber: Int) {
+    override suspend fun onUpdateTreesInRow(staff: Staff, rowId: Int, treeNumber: Int) {
         uiState.value.job.subJobs.firstOrNull() { it.staffs.any { it.name == staff.name } }?.let { subJob ->
             val availableTreeNumber = min(treeNumber, subJob.availableRows.firstOrNull { it.rowId == rowId }?.let {
                 it.totalTrees - it.completedLogs.sumOf { it.completed }
@@ -154,7 +156,7 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: Thre
         }
     }
 
-    override fun onRateChanged(staff: Staff, rate: Int) {
+    override suspend fun onRateChanged(staff: Staff, rate: Int) {
         uiState.value.job.subJobs.firstOrNull() { it.staffs.any { it.name == staff.name } }?.let { subJob ->
             subJob.copy(
                 staffs = subJob.staffs.map {
@@ -170,7 +172,7 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(threadDispatcher: Thre
         }
     }
 
-    override fun onAppRateToAll(appliedSubJob: SubJob, rate: Int) {
+    override suspend fun onAppRateToAll(appliedSubJob: SubJob, rate: Int) {
         uiState.value.job.subJobs.firstOrNull() { it.name == appliedSubJob.name }?.let { subJob ->
             subJob.copy(
                 staffs = subJob.staffs.map {

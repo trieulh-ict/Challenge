@@ -44,5 +44,5 @@ class JobRepoImpl @Inject constructor(
                 else -> DataState.Failed(Error("Something wrong. Please Try again"))
             }
         )
-    }
+    }.flowOn(ioDispatcher)
 }

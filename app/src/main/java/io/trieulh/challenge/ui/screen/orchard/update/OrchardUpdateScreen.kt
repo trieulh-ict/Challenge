@@ -9,7 +9,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +37,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RootNavGraph(start = true)
-@Destination
+@Destination(style = AnimatedTransition::class)
 @Composable
 fun OrchardUpdateScreen(
     navigator: DestinationsNavigator,
@@ -65,7 +68,7 @@ fun OrchardUpdateScreen(
                 UpdateContent(
                     job = uiState.job,
                     isSubmittingData = uiState.isSubmittingData,
-                    uiStateHandler = viewModel,
+                    actionHandler = viewModel,
                     onSubmit = {
                         viewModel.submitData()
                     }
@@ -95,9 +98,8 @@ private fun UpdateContent(
     job: Job,
     isSubmittingData: Boolean,
     onSubmit: () -> Unit,
-    uiStateHandler: OrchardUpdateUiStateManager?
+    actionHandler: OrchardUpdateActionHandler
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -116,22 +118,36 @@ private fun UpdateContent(
                     jobName = job.name,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     onUpdateMaxTrees = {
-                        uiStateHandler?.updateMaxTreesBySubJob(subJob.name)
+                        actionHandler.handle(OrchardUpdateAction.UpdateMaxTreesAction(subJob.name))
                     },
                     onSwitchRateType = { staff: Staff, rateType: RateType ->
-                        uiStateHandler?.switchRateType(staff, rateType)
+                        actionHandler.handle(
+                            OrchardUpdateAction
+                                .SwitchRateTypeAction(staff, rateType)
+                        )
                     },
                     onToggleTreeRow = { staff: Staff, rowId: Int ->
-                        uiStateHandler?.onToggleTreeRow(staff, rowId)
+                        actionHandler.handle(
+                            OrchardUpdateAction.ToggleTreeRowAction(
+                                staff,
+                                rowId
+                            )
+                        )
                     },
                     onUpdateTreesInRow = { staff: Staff, rowId: Int, treeNumber: Int ->
-                        uiStateHandler?.onUpdateTreesInRow(staff, rowId, treeNumber)
+                        actionHandler.handle(
+                            OrchardUpdateAction.UpdateTreesInRowAction(
+                                staff,
+                                rowId,
+                                treeNumber
+                            )
+                        )
                     },
                     onRateChanged = { staff: Staff, rate: Int ->
-                        uiStateHandler?.onRateChanged(staff, rate)
+                        actionHandler.handle(OrchardUpdateAction.RateChangedAction(staff, rate))
                     },
                     onApplyRateToAll = { rate: Int ->
-                        uiStateHandler?.onAppRateToAll(subJob, rate)
+                        actionHandler.handle(OrchardUpdateAction.ApplyRateToAllAction(subJob, rate))
                     }
                 )
             }
@@ -166,7 +182,11 @@ private fun PreviewOrchardUpdateScreen() {
     UpdateContent(
         job = MockResponse.mockJob,
         isSubmittingData = true,
-        uiStateHandler = null,
+        actionHandler = object : OrchardUpdateActionHandler {
+            override fun handle(action: OrchardUpdateAction) {
+
+            }
+        },
         onSubmit = {}
     )
 }
