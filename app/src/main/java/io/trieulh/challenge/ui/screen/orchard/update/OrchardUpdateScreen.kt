@@ -171,9 +171,7 @@ private fun UpdateContent(
             }
             Text(text = stringResource(id = R.string.confirm).uppercase())
         }
-
     }
-
 }
 
 @Preview
@@ -184,7 +182,6 @@ private fun PreviewOrchardUpdateScreen() {
         isSubmittingData = true,
         uiHandler = object : OrchardUpdateUiStateHandler {
             override fun handle(action: OrchardUpdateUiStateAction) {
-
             }
         },
         onSubmit = {}

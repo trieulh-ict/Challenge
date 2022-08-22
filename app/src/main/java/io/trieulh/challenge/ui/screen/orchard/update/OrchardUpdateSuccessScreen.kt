@@ -50,12 +50,14 @@ fun OrchardUpdateSuccessScreen(navigator: DestinationsNavigator) {
             modifier = Modifier.padding(horizontal = 32.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            navigator.navigate(OrchardUpdateScreenDestination) {
-                launchSingleTop = true
-                popUpTo(NavGraphs.root)
+        Button(
+            onClick = {
+                navigator.navigate(OrchardUpdateScreenDestination) {
+                    launchSingleTop = true
+                    popUpTo(NavGraphs.root)
+                }
             }
-        }) {
+        ) {
             Text(stringResource(id = R.string.update_again))
         }
     }

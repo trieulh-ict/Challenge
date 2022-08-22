@@ -20,15 +20,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.trieulh.challenge.R
 import io.trieulh.challenge.data.MockResponse
+import io.trieulh.challenge.domain.model.AssignedRow
 import io.trieulh.challenge.domain.model.AvailableRow
 import io.trieulh.challenge.domain.model.RateType
 import io.trieulh.challenge.domain.model.Staff
 import io.trieulh.challenge.ui.theme.CelticBlue
 import io.trieulh.challenge.ui.theme.LightTaupe
 import io.trieulh.challenge.ui.theme.SatinSheenGold
-import io.trieulh.challenge.R
-import io.trieulh.challenge.domain.model.AssignedRow
 
 @Composable
 fun OrchardWorkerItem(
@@ -274,9 +274,11 @@ private fun PieceRateInputField(
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(4.dp))
-        TextButton(onClick = {
-            onApplyRateToAll(rate ?: 0)
-        }) {
+        TextButton(
+            onClick = {
+                onApplyRateToAll(rate ?: 0)
+            }
+        ) {
             Text(stringResource(R.string.orchard_update_btn_apply_to_all))
         }
     }

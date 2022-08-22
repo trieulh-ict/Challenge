@@ -7,7 +7,6 @@ import io.trieulh.challenge.di.IODispatcher
 import io.trieulh.challenge.domain.model.Job
 import io.trieulh.challenge.domain.repository.JobRepo
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn

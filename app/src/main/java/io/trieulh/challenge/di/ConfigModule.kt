@@ -29,6 +29,5 @@ class ConfigModule {
         override fun default(): CoroutineDispatcher = Dispatchers.Default
         override fun main(): CoroutineDispatcher = Dispatchers.Main
         override fun unconfined(): CoroutineDispatcher = Dispatchers.Unconfined
-
     }
 }

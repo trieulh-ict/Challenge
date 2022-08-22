@@ -2,6 +2,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven("https://plugins.gradle.org/m2/")
     }
 
     dependencies {
@@ -10,6 +11,7 @@ buildscript {
             classpath(kotlin)
             classpath(kotlinSerialization)
             classpath(hilt)
+            classpath(ktlint)
         }
     }
 }

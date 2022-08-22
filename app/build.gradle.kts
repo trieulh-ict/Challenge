@@ -1,11 +1,10 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version Versions.ksp
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
@@ -73,7 +72,6 @@ dependencies {
 
         androidTestImplementation(uiTestJunit4)
         debugImplementation(uiTooling)
-
     }
     ksp(Deps.Compose.ksp)
 
@@ -97,6 +95,11 @@ dependencies {
         testImplementation(turbine)
         androidTestImplementation(junitX)
     }
+}
+
+ktlint {
+    debug.set(true)
+    disabledRules.set(setOf("no-wildcard-imports"))
 }
 
 // Allow references to generated code

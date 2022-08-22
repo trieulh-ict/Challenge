@@ -26,7 +26,6 @@ class OrchardUpdateViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-
     private val fetchJobInfoUseCase: FetchJobInfoUseCase = mockk()
     private val updateJobInfoUseCase: UpdateJobInfoUseCase = mockk()
     private val testDispatcher: ThreadDispatcher = TestThreadDispatcher
@@ -46,7 +45,6 @@ class OrchardUpdateViewModelTest {
             testDispatcher
         )
     }
-
 
     @Test
     fun `Test init success`() = runTest {
@@ -205,5 +203,4 @@ class OrchardUpdateViewModelTest {
             )
         }
     }
-
 }

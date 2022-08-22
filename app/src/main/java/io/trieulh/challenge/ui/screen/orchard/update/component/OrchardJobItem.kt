@@ -12,13 +12,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.trieulh.challenge.R
 import io.trieulh.challenge.data.MockResponse
+import io.trieulh.challenge.domain.model.RateType
+import io.trieulh.challenge.domain.model.Staff
 import io.trieulh.challenge.domain.model.SubJob
 import io.trieulh.challenge.ui.theme.LightTaupe
 import io.trieulh.challenge.ui.theme.OldLace
-import io.trieulh.challenge.R
-import io.trieulh.challenge.domain.model.RateType
-import io.trieulh.challenge.domain.model.Staff
 
 @Composable
 fun OrchardJobItem(

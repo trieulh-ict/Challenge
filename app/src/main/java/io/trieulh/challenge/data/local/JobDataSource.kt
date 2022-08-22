@@ -1,6 +1,5 @@
 package io.trieulh.challenge.data.local
 
-import io.trieulh.challenge.data.MockResponse
 import io.trieulh.challenge.domain.model.Job
 import javax.inject.Inject
 
@@ -20,5 +19,4 @@ class JobDataSourceImpl @Inject constructor() : JobDataSource {
     override suspend fun saveJobInfo(job: Job) {
         jobMap[job.name] = job
     }
-
 }

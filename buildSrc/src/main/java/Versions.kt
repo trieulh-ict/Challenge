@@ -6,6 +6,7 @@ object Versions {
     const val kotlin = "1.7.10"
     const val gradlePluginVersion = "7.2.1"
     const val hiltPlugin = "2.43.2"
+    const val ktlintPlugin = "10.1.0"
     const val coroutine = "1.6.4"
 
     const val composeViewModel = "2.5.1"
@@ -41,6 +42,7 @@ object Deps {
             "org.jetbrains.kotlin:kotlin-serialization:${Versions.kotlin}"
         const val pluginVersion = "com.android.tools.build:gradle:${Versions.gradlePluginVersion}"
         const val hilt = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hiltPlugin}"
+        const val ktlint = "org.jlleitschuh.gradle:ktlint-gradle:${Versions.ktlintPlugin}"
     }
 
     object AndroidX {

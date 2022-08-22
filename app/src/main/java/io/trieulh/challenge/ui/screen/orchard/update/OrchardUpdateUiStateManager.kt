@@ -126,9 +126,12 @@ class OrchardUpdateUiStateManagerImpl @Inject constructor(private val dispatcher
 
     override suspend fun onUpdateTreesInRow(staff: Staff, rowId: Int, treeNumber: Int) {
         uiState.value.job.subJobs.firstOrNull() { it.staffs.any { it.name == staff.name } }?.let { subJob ->
-            val availableTreeNumber = min(treeNumber, subJob.availableRows.firstOrNull { it.rowId == rowId }?.let {
-                it.totalTrees - it.completedLogs.sumOf { it.completed }
-            } ?: Int.MAX_VALUE)
+            val availableTreeNumber = min(
+                treeNumber,
+                subJob.availableRows.firstOrNull { it.rowId == rowId }?.let {
+                    it.totalTrees - it.completedLogs.sumOf { it.completed }
+                } ?: Int.MAX_VALUE
+            )
             subJob.copy(
                 staffs = subJob.staffs.map {
                     if (it.name != staff.name) {

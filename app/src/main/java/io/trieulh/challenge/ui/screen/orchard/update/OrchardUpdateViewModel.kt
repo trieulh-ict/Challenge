@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 data class OrchardUpdateUiState(
     val isFetchingData: Boolean = true,
     val isSubmittingData: Boolean = false,
