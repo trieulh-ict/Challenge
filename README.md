@@ -1,3 +1,5 @@
+![Unit Test](https://github.com/trieulh-ict/Challenge/actions/workflows/android.yml/badge.svg?branch=master)
+
 # Challenge
 
 This is a challenge project.
@@ -5,7 +7,7 @@ This is a challenge project.
 ## Stack:
 
 - **Architecture**: MVVM
-- **UI**: Compose, Compose Destionation for navigation
+- **UI**: Compose, Compose Destination for navigation
 - **Dependency Injection**: Hilt
 - **Unit Test**: Mockk, Turbine
 

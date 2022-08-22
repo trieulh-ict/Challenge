@@ -14,7 +14,6 @@ import io.trieulh.challenge.domain.model.SubJob
 import io.trieulh.challenge.domain.usecase.FetchJobInfoUseCase
 import io.trieulh.challenge.domain.usecase.UpdateJobInfoUseCase
 import io.trieulh.challenge.utils.ThreadDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,20 +29,21 @@ sealed class OrchardUpdateNavigationState {
     object NavigateToSuccess : OrchardUpdateNavigationState()
 }
 
-sealed class OrchardUpdateAction {
-    object SubmitAction : OrchardUpdateAction()
-    class UpdateMaxTreesAction(val name: String) : OrchardUpdateAction()
-    class SwitchRateTypeAction(val staff: Staff, val rateType: RateType) : OrchardUpdateAction()
-    class ToggleTreeRowAction(val staff: Staff, val rowId: Int) : OrchardUpdateAction()
-    class UpdateTreesInRowAction(val staff: Staff, val rowId: Int, val treeNumber: Int) :
-        OrchardUpdateAction()
+sealed class OrchardUpdateUiStateAction {
+    class UpdateMaxTreesAction(val name: String) : OrchardUpdateUiStateAction()
+    class SwitchRateTypeAction(val staff: Staff, val rateType: RateType) :
+        OrchardUpdateUiStateAction()
 
-    class RateChangedAction(val staff: Staff, val rate: Int) : OrchardUpdateAction()
-    class ApplyRateToAllAction(val subJob: SubJob, val rate: Int) : OrchardUpdateAction()
+    class ToggleTreeRowAction(val staff: Staff, val rowId: Int) : OrchardUpdateUiStateAction()
+    class UpdateTreesInRowAction(val staff: Staff, val rowId: Int, val treeNumber: Int) :
+        OrchardUpdateUiStateAction()
+
+    class RateChangedAction(val staff: Staff, val rate: Int) : OrchardUpdateUiStateAction()
+    class ApplyRateToAllAction(val subJob: SubJob, val rate: Int) : OrchardUpdateUiStateAction()
 }
 
-interface OrchardUpdateActionHandler {
-    fun handle(action: OrchardUpdateAction)
+interface OrchardUpdateUiStateHandler {
+    fun handle(action: OrchardUpdateUiStateAction)
 }
 
 @HiltViewModel
@@ -52,7 +52,7 @@ class OrchardUpdateViewModel @Inject constructor(
     private val updateJobInfoUseCase: UpdateJobInfoUseCase,
     private val uiStateManager: OrchardUpdateUiStateManager,
     private val dispatcher: ThreadDispatcher
-) : ViewModel(), OrchardUpdateActionHandler {
+) : ViewModel(), OrchardUpdateUiStateHandler {
 
     val uiState: StateFlow<OrchardUpdateUiState> = uiStateManager.uiState
 
@@ -78,7 +78,7 @@ class OrchardUpdateViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun submitData() {
+    fun submitData() {
         updateJobInfoUseCase(uiState.value.job)
             .onStart {
                 uiStateManager.startSubmittingData()
@@ -100,34 +100,33 @@ class OrchardUpdateViewModel @Inject constructor(
         }
     }
 
-    override fun handle(action: OrchardUpdateAction) {
-        viewModelScope.launch(dispatcher.io()) {
+    override fun handle(action: OrchardUpdateUiStateAction) {
+        viewModelScope.launch(dispatcher.default()) {
             when (action) {
-                is OrchardUpdateAction.UpdateMaxTreesAction -> uiStateManager.updateMaxTreesBySubJob(
+                is OrchardUpdateUiStateAction.UpdateMaxTreesAction -> uiStateManager.updateMaxTreesBySubJob(
                     action.name
                 )
-                is OrchardUpdateAction.SwitchRateTypeAction -> uiStateManager.switchRateType(
+                is OrchardUpdateUiStateAction.SwitchRateTypeAction -> uiStateManager.switchRateType(
                     action.staff,
                     action.rateType
                 )
-                is OrchardUpdateAction.ToggleTreeRowAction -> uiStateManager.onToggleTreeRow(
+                is OrchardUpdateUiStateAction.ToggleTreeRowAction -> uiStateManager.onToggleTreeRow(
                     action.staff,
                     action.rowId
                 )
-                is OrchardUpdateAction.UpdateTreesInRowAction -> uiStateManager.onUpdateTreesInRow(
+                is OrchardUpdateUiStateAction.UpdateTreesInRowAction -> uiStateManager.onUpdateTreesInRow(
                     action.staff,
                     action.rowId,
                     action.treeNumber
                 )
-                is OrchardUpdateAction.RateChangedAction -> uiStateManager.onRateChanged(
+                is OrchardUpdateUiStateAction.RateChangedAction -> uiStateManager.onRateChanged(
                     action.staff,
                     action.rate
                 )
-                is OrchardUpdateAction.ApplyRateToAllAction -> uiStateManager.onAppRateToAll(
+                is OrchardUpdateUiStateAction.ApplyRateToAllAction -> uiStateManager.onAppRateToAll(
                     action.subJob,
                     action.rate
                 )
-                is OrchardUpdateAction.SubmitAction -> submitData()
             }
         }
     }

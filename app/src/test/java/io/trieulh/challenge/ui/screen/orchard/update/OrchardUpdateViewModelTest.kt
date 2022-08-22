@@ -64,7 +64,7 @@ class OrchardUpdateViewModelTest {
     @Test
     fun `Test submit data success`() = runTest {
         viewModel.navigationEvent.test {
-            viewModel.handle(OrchardUpdateAction.SubmitAction)
+            viewModel.submitData()
             var item = awaitItem()
             assertEquals(OrchardUpdateNavigationState.NavigateToSuccess, item)
             verify(exactly = 1) {
@@ -77,7 +77,7 @@ class OrchardUpdateViewModelTest {
 
     @Test
     fun `Test handle UpdateMaxTreesAction`() = runTest {
-        viewModel.handle(OrchardUpdateAction.UpdateMaxTreesAction(MockResponse.mockSubJob1.name))
+        viewModel.handle(OrchardUpdateUiStateAction.UpdateMaxTreesAction(MockResponse.mockSubJob1.name))
         uiStateManager.uiState.test {
             var item = awaitItem()
             assertEquals(
@@ -90,7 +90,7 @@ class OrchardUpdateViewModelTest {
     @Test
     fun `Test handle SwitchRateTypeAction`() = runTest {
         viewModel.handle(
-            OrchardUpdateAction.SwitchRateTypeAction(
+            OrchardUpdateUiStateAction.SwitchRateTypeAction(
                 MockResponse.mockStaff1,
                 RateType.PieceRate
             )
@@ -113,7 +113,7 @@ class OrchardUpdateViewModelTest {
         )
 
         viewModel.handle(
-            OrchardUpdateAction.ToggleTreeRowAction(
+            OrchardUpdateUiStateAction.ToggleTreeRowAction(
                 MockResponse.mockStaff1,
                 3
             )
@@ -135,7 +135,7 @@ class OrchardUpdateViewModelTest {
         )
 
         viewModel.handle(
-            OrchardUpdateAction.UpdateTreesInRowAction(
+            OrchardUpdateUiStateAction.UpdateTreesInRowAction(
                 MockResponse.mockStaff1,
                 4,
                 100
@@ -159,7 +159,7 @@ class OrchardUpdateViewModelTest {
         )
 
         viewModel.handle(
-            OrchardUpdateAction.RateChangedAction(
+            OrchardUpdateUiStateAction.RateChangedAction(
                 MockResponse.mockStaff2,
                 100
             )
@@ -181,14 +181,14 @@ class OrchardUpdateViewModelTest {
         )
 
         viewModel.handle(
-            OrchardUpdateAction.SwitchRateTypeAction(
+            OrchardUpdateUiStateAction.SwitchRateTypeAction(
                 MockResponse.mockStaff1,
                 RateType.PieceRate
             )
         )
 
         viewModel.handle(
-            OrchardUpdateAction.ApplyRateToAllAction(
+            OrchardUpdateUiStateAction.ApplyRateToAllAction(
                 MockResponse.mockSubJob1,
                 100
             )

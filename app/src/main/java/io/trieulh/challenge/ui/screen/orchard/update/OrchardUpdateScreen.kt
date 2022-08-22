@@ -68,9 +68,9 @@ fun OrchardUpdateScreen(
                 UpdateContent(
                     job = uiState.job,
                     isSubmittingData = uiState.isSubmittingData,
-                    actionHandler = viewModel,
+                    uiHandler = viewModel,
                     onSubmit = {
-                        viewModel.handle(OrchardUpdateAction.SubmitAction)
+                        viewModel.submitData()
                     }
                 )
             }
@@ -98,7 +98,7 @@ private fun UpdateContent(
     job: Job,
     isSubmittingData: Boolean,
     onSubmit: () -> Unit,
-    actionHandler: OrchardUpdateActionHandler
+    uiHandler: OrchardUpdateUiStateHandler
 ) {
     Column(
         modifier = Modifier
@@ -118,25 +118,25 @@ private fun UpdateContent(
                     jobName = job.name,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     onUpdateMaxTrees = {
-                        actionHandler.handle(OrchardUpdateAction.UpdateMaxTreesAction(subJob.name))
+                        uiHandler.handle(OrchardUpdateUiStateAction.UpdateMaxTreesAction(subJob.name))
                     },
                     onSwitchRateType = { staff: Staff, rateType: RateType ->
-                        actionHandler.handle(
-                            OrchardUpdateAction
+                        uiHandler.handle(
+                            OrchardUpdateUiStateAction
                                 .SwitchRateTypeAction(staff, rateType)
                         )
                     },
                     onToggleTreeRow = { staff: Staff, rowId: Int ->
-                        actionHandler.handle(
-                            OrchardUpdateAction.ToggleTreeRowAction(
+                        uiHandler.handle(
+                            OrchardUpdateUiStateAction.ToggleTreeRowAction(
                                 staff,
                                 rowId
                             )
                         )
                     },
                     onUpdateTreesInRow = { staff: Staff, rowId: Int, treeNumber: Int ->
-                        actionHandler.handle(
-                            OrchardUpdateAction.UpdateTreesInRowAction(
+                        uiHandler.handle(
+                            OrchardUpdateUiStateAction.UpdateTreesInRowAction(
                                 staff,
                                 rowId,
                                 treeNumber
@@ -144,10 +144,10 @@ private fun UpdateContent(
                         )
                     },
                     onRateChanged = { staff: Staff, rate: Int ->
-                        actionHandler.handle(OrchardUpdateAction.RateChangedAction(staff, rate))
+                        uiHandler.handle(OrchardUpdateUiStateAction.RateChangedAction(staff, rate))
                     },
                     onApplyRateToAll = { rate: Int ->
-                        actionHandler.handle(OrchardUpdateAction.ApplyRateToAllAction(subJob, rate))
+                        uiHandler.handle(OrchardUpdateUiStateAction.ApplyRateToAllAction(subJob, rate))
                     }
                 )
             }
@@ -182,8 +182,8 @@ private fun PreviewOrchardUpdateScreen() {
     UpdateContent(
         job = MockResponse.mockJob,
         isSubmittingData = true,
-        actionHandler = object : OrchardUpdateActionHandler {
-            override fun handle(action: OrchardUpdateAction) {
+        uiHandler = object : OrchardUpdateUiStateHandler {
+            override fun handle(action: OrchardUpdateUiStateAction) {
 
             }
         },
