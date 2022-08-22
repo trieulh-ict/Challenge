@@ -70,7 +70,7 @@ fun OrchardUpdateScreen(
                     isSubmittingData = uiState.isSubmittingData,
                     actionHandler = viewModel,
                     onSubmit = {
-                        viewModel.submitData()
+                        viewModel.handle(OrchardUpdateAction.SubmitAction)
                     }
                 )
             }

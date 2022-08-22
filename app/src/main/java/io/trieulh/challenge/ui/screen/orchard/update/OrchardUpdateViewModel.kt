@@ -31,10 +31,13 @@ sealed class OrchardUpdateNavigationState {
 }
 
 sealed class OrchardUpdateAction {
+    object SubmitAction : OrchardUpdateAction()
     class UpdateMaxTreesAction(val name: String) : OrchardUpdateAction()
     class SwitchRateTypeAction(val staff: Staff, val rateType: RateType) : OrchardUpdateAction()
     class ToggleTreeRowAction(val staff: Staff, val rowId: Int) : OrchardUpdateAction()
-    class UpdateTreesInRowAction(val staff: Staff, val rowId: Int, val treeNumber: Int) : OrchardUpdateAction()
+    class UpdateTreesInRowAction(val staff: Staff, val rowId: Int, val treeNumber: Int) :
+        OrchardUpdateAction()
+
     class RateChangedAction(val staff: Staff, val rate: Int) : OrchardUpdateAction()
     class ApplyRateToAllAction(val subJob: SubJob, val rate: Int) : OrchardUpdateAction()
 }
@@ -75,7 +78,7 @@ class OrchardUpdateViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun submitData() {
+    private fun submitData() {
         updateJobInfoUseCase(uiState.value.job)
             .onStart {
                 uiStateManager.startSubmittingData()
@@ -84,6 +87,9 @@ class OrchardUpdateViewModel @Inject constructor(
                 state.onSuccess {
                     navigateToSuccess()
                 }
+            }
+            .onCompletion {
+                uiStateManager.stopSubmittingData()
             }
             .launchIn(viewModelScope)
     }
@@ -97,16 +103,31 @@ class OrchardUpdateViewModel @Inject constructor(
     override fun handle(action: OrchardUpdateAction) {
         viewModelScope.launch(dispatcher.io()) {
             when (action) {
-                is OrchardUpdateAction.UpdateMaxTreesAction -> uiStateManager.updateMaxTreesBySubJob(action.name)
-                is OrchardUpdateAction.SwitchRateTypeAction -> uiStateManager.switchRateType(action.staff, action.rateType)
-                is OrchardUpdateAction.ToggleTreeRowAction -> uiStateManager.onToggleTreeRow(action.staff, action.rowId)
+                is OrchardUpdateAction.UpdateMaxTreesAction -> uiStateManager.updateMaxTreesBySubJob(
+                    action.name
+                )
+                is OrchardUpdateAction.SwitchRateTypeAction -> uiStateManager.switchRateType(
+                    action.staff,
+                    action.rateType
+                )
+                is OrchardUpdateAction.ToggleTreeRowAction -> uiStateManager.onToggleTreeRow(
+                    action.staff,
+                    action.rowId
+                )
                 is OrchardUpdateAction.UpdateTreesInRowAction -> uiStateManager.onUpdateTreesInRow(
                     action.staff,
                     action.rowId,
                     action.treeNumber
                 )
-                is OrchardUpdateAction.RateChangedAction -> uiStateManager.onRateChanged(action.staff, action.rate)
-                is OrchardUpdateAction.ApplyRateToAllAction -> uiStateManager.onAppRateToAll(action.subJob, action.rate)
+                is OrchardUpdateAction.RateChangedAction -> uiStateManager.onRateChanged(
+                    action.staff,
+                    action.rate
+                )
+                is OrchardUpdateAction.ApplyRateToAllAction -> uiStateManager.onAppRateToAll(
+                    action.subJob,
+                    action.rate
+                )
+                is OrchardUpdateAction.SubmitAction -> submitData()
             }
         }
     }
