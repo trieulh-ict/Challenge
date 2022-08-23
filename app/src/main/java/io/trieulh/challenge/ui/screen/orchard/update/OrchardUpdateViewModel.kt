@@ -13,7 +13,6 @@ import io.trieulh.challenge.domain.model.Staff
 import io.trieulh.challenge.domain.model.SubJob
 import io.trieulh.challenge.domain.usecase.FetchJobInfoUseCase
 import io.trieulh.challenge.domain.usecase.UpdateJobInfoUseCase
-import io.trieulh.challenge.utils.ThreadDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,8 +48,7 @@ interface OrchardUpdateUiStateHandler {
 class OrchardUpdateViewModel @Inject constructor(
     private val fetchJobInfoUseCase: FetchJobInfoUseCase,
     private val updateJobInfoUseCase: UpdateJobInfoUseCase,
-    private val uiStateManager: OrchardUpdateUiStateManager,
-    private val dispatcher: ThreadDispatcher
+    private val uiStateManager: OrchardUpdateUiStateManager
 ) : ViewModel(), OrchardUpdateUiStateHandler {
 
     val uiState: StateFlow<OrchardUpdateUiState> = uiStateManager.uiState
@@ -100,7 +98,7 @@ class OrchardUpdateViewModel @Inject constructor(
     }
 
     override fun handle(action: OrchardUpdateUiStateAction) {
-        viewModelScope.launch(dispatcher.default()) {
+        viewModelScope.launch {
             when (action) {
                 is OrchardUpdateUiStateAction.UpdateMaxTreesAction -> uiStateManager.updateMaxTreesBySubJob(
                     action.name

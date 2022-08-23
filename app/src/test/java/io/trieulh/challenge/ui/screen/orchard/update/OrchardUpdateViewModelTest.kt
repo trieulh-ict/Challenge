@@ -1,10 +1,10 @@
 package io.trieulh.challenge.ui.screen.orchard.update
 
 import app.cash.turbine.test
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
-import io.mockk.verify
 import io.trieulh.challenge.common.DataState
 import io.trieulh.challenge.common.MainDispatcherRule
 import io.trieulh.challenge.common.TestThreadDispatcher
@@ -12,7 +12,6 @@ import io.trieulh.challenge.data.MockResponse
 import io.trieulh.challenge.domain.model.RateType
 import io.trieulh.challenge.domain.usecase.FetchJobInfoUseCase
 import io.trieulh.challenge.domain.usecase.UpdateJobInfoUseCase
-import io.trieulh.challenge.utils.ThreadDispatcher
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -28,7 +27,6 @@ class OrchardUpdateViewModelTest {
 
     private val fetchJobInfoUseCase: FetchJobInfoUseCase = mockk()
     private val updateJobInfoUseCase: UpdateJobInfoUseCase = mockk()
-    private val testDispatcher: ThreadDispatcher = TestThreadDispatcher
     private val uiStateManager: OrchardUpdateUiStateManager =
         spyk(OrchardUpdateUiStateManagerImpl(TestThreadDispatcher))
 
@@ -42,13 +40,12 @@ class OrchardUpdateViewModelTest {
             fetchJobInfoUseCase,
             updateJobInfoUseCase,
             uiStateManager,
-            testDispatcher
         )
     }
 
     @Test
     fun `Test init success`() = runTest {
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             fetchJobInfoUseCase(any())
             uiStateManager.startFetchingData()
             uiStateManager.updateJob(any())
@@ -65,7 +62,7 @@ class OrchardUpdateViewModelTest {
             viewModel.submitData()
             var item = awaitItem()
             assertEquals(OrchardUpdateNavigationState.NavigateToSuccess, item)
-            verify(exactly = 1) {
+            coVerify(exactly = 1) {
                 fetchJobInfoUseCase(any())
                 uiStateManager.startSubmittingData()
                 uiStateManager.stopSubmittingData()

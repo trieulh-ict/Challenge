@@ -6,14 +6,14 @@ sealed class DataState<out T> {
     class Failed<out T>(val error: Error) : DataState<T>()
 }
 
-fun <T> DataState<T>.onSuccess(action: (T) -> Unit) {
+suspend fun <T> DataState<T>.onSuccess(action: suspend (T) -> Unit) {
     if (this is DataState.Success) action(this.data)
 }
 
-fun <T> DataState<T>.onLoading(action: (T?) -> Unit) {
+suspend fun <T> DataState<T>.onLoading(action: suspend (T?) -> Unit) {
     if (this is DataState.Loading) action(this.data)
 }
 
-fun <T> DataState<T>.onFailed(action: (Error) -> Unit) {
+suspend fun <T> DataState<T>.onFailed(action: suspend (Error) -> Unit) {
     if (this is DataState.Failed) action(this.error)
 }
